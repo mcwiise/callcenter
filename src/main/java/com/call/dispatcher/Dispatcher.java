@@ -1,5 +1,11 @@
 package com.call.dispatcher;
 
+import com.call.domain.ClientCall;
+import com.call.domain.Operator;
+import com.call.pool.GenericPool;
+import com.call.pool.OperatorPool;
+
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -14,6 +20,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class Dispatcher{
 
     private ThreadPoolExecutor executor;
+    private GenericPool<Operator> operatorsPool;
 
     /**
      * The constructor takes the size and instantiates the thread pool to handle calls,
@@ -30,6 +37,21 @@ public class Dispatcher{
                       int supervisorPoolSize,
                       int directorPoolSize){
         this.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(callPoolSize);
+        this.operatorsPool = new OperatorPool(operatorPoolSize);
+    }
+
+
+    public void dispatchCall(){
+
+        ClientCall clientCall = new ClientCall();
+
+        if(!operatorsPool.isEmpty()){
+            Operator operator = operatorsPool.get();
+            clientCall.setAgent(operator);
+            CompletableFuture
+                    .supplyAsync(clientCall, executor)
+                    .thenAccept(agent -> operatorsPool.release((Operator)agent));
+        }
     }
 
     /**

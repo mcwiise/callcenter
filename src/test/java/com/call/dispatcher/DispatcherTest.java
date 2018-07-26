@@ -10,6 +10,8 @@ public class DispatcherTest {
     @Test
     public void shouldDipatchOneCallTest(){
         Dispatcher dispatcher = new Dispatcher(10, 7,2,1);
+        dispatcher.dispatchCall();
         dispatcher.shutDown();
     }
+
 }
