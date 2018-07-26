@@ -14,4 +14,20 @@ public class DispatcherTest {
         dispatcher.shutDown();
     }
 
+    @Test
+    public void shouldDipatchTenCallsTest(){
+        Dispatcher dispatcher = new Dispatcher(10, 7,2,1);
+        dispatcher.dispatchCall();
+        dispatcher.dispatchCall();
+        dispatcher.dispatchCall();
+        dispatcher.dispatchCall();
+        dispatcher.dispatchCall();
+        dispatcher.dispatchCall();
+        dispatcher.dispatchCall();
+        dispatcher.dispatchCall();
+        dispatcher.dispatchCall();
+        dispatcher.dispatchCall();
+        dispatcher.shutDown();
+    }
+
 }
