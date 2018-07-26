@@ -1,17 +1,12 @@
 package com.call.dispatcher;
 
-import com.call.domain.ClientCall;
-import com.call.domain.Director;
-import com.call.domain.Operator;
-import com.call.domain.Supervisor;
+import com.call.domain.*;
 import com.call.pool.DirectorPool;
 import com.call.pool.GenericPool;
 import com.call.pool.OperatorPool;
 import com.call.pool.SupervisorPool;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.*;
 
 /**
  * The Dispatcher class handles calls coming from the client
@@ -19,6 +14,7 @@ import java.util.concurrent.ThreadPoolExecutor;
  * use of ThreadPoolExecutor class to manage the pool of worker threads,
  * and also contains a queue that keeps tasks to get executed.
  *
+ * @see ThreadPoolExecutor
  * @author  German Valencia
  */
 public class Dispatcher{
@@ -33,6 +29,8 @@ public class Dispatcher{
      * and also the generic pools which provide the available Agents
      * to attend calls.
      *
+     * @see GenericPool
+     * @see Agent
      * @param callPoolSize the size of the threadPool that handles the call.
      * @param operatorPoolSize The number of available operators.
      * @param supervisorPoolSize The number of available supervisors.
@@ -44,13 +42,20 @@ public class Dispatcher{
                       int directorPoolSize){
         this.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(callPoolSize);
         this.operatorsPool = new OperatorPool(operatorPoolSize);
-        this.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(callPoolSize);
-        this.operatorsPool = new OperatorPool(operatorPoolSize);
         this.supervisorPool = new SupervisorPool(supervisorPoolSize);
         this.directorPool = new DirectorPool(directorPoolSize);
     }
 
-
+    /**
+     * This method dispatches an asynchronous ClientCall (supplier). Firstly,
+     * it will get the next available Agent from the generic pools, then will start
+     * a new thread execution throughout the use of a CompletableFuture, which in turn
+     * will wait for the ClientCall to complete, and releasing the Agent back to the generic pool,
+     * everything in a non-blocking fasion.
+     *
+     * @see ClientCall
+     * @see CompletableFuture
+     * */
     public void dispatchCall(){
 
         ClientCall clientCall = new ClientCall();
@@ -81,6 +86,7 @@ public class Dispatcher{
      * as long as all the CompletableFuture instances have ended,
      * making sure all Suppliers where attended.
      *
+     * @see ClientCall
      * */
     public void shutDown(){
         this.executor.shutdown();
