@@ -24,5 +24,11 @@ to run the application.
 
 ## Extra Points
 
-- All classes were documented properly.
-- Additional test cases were added as per needs.
+Dar alguna solución sobre qué pasa con una llamada cuando entran
+más de 10 llamadas concurrentes.
+
+- La aplicación basa su implementación en un ThreadPool configurable (10 hilos), el cuál recibe las tareas a ejecutar
+(en este caso llamadas) a través de un ExecutorService, por tanto en caso de que haya mas de 10 llamadas concurrentes,
+el ExecutorService encolará la llamada, hasta que un hilo del pool se encuentre de nuevo disponible.
+
+JavaDoc y test unitarios fueron creados de acuerdo a necesidad.
