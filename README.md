@@ -7,15 +7,19 @@ a ThreadPoolExecutor in a non-blocking fashion.
 
 Please, click on:
 
-https://github.com/gvalenncia/call-center/blob/master/call-center.jpg
+https://github.com/valennciag/callcenter/blob/master/call-center.jpg
 
-## Run Test Cases
+## Run Test Cases and Coverage
 
 This is a maven project, so from the project root folder, please execute
 
 `mvn clean test`
 
-There is also a dummy client on com.callcenter.dispatcher.Client that you can use 
+The project also supports Jacoco, so go to the following folder and open index.html file to see the coverage report:
+
+$HOME_FOLDER/callcenter/target/site/jacoco/
+
+There is also a dummy client on com.call.dispatcher.Client that you can use 
 to run the application.
 
 ## Extra Points
