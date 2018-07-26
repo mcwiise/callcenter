@@ -1,46 +1,43 @@
 package com.call.pool;
-import com.call.domain.Operator;
+
+import com.call.domain.Supervisor;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-
 /**
- * The class is a concrete implementation of an Agent pool of Operator objects.
+ * The class is a concrete implementation of an Agent pool of Supervisor objects.
  * It takes a BlockingQueue implementation that is thread-safe.
  *
  * @see BlockingQueue
  * @see com.call.domain.Agent
- * @see com.call.domain.Operator
+ * @see com.call.domain.Supervisor
  * @author  German Valencia
  */
-public class OperatorPool implements GenericPool<Operator> {
+public class SupervisorPool implements GenericPool<Supervisor> {
 
     private int size;
-    private BlockingQueue<Operator> operators;
+    private BlockingQueue<Supervisor> supervisors;
 
-    /**
-     * @param size the pool size
-     * */
-    public OperatorPool(int size) {
+    public SupervisorPool(int size) {
         this.size = size;
         this.init();
     }
 
     /**
-     * This method initializes a queue of Operators using a LinkedBlockingQueue,
+     * This method initializes a queue of Supervisors using a LinkedBlockingQueue,
      * making sure a sync access from threads.
      * */
     private void init() {
-        operators = new LinkedBlockingQueue<>();
+        supervisors = new LinkedBlockingQueue<>();
         for (int i = 0; i<size; i++) {
-            operators.add(new Operator());
+            supervisors.add(new Supervisor());
         }
     }
 
     @Override
-    public Operator get() {
-        if (!operators.isEmpty()){
+    public Supervisor get() {
+        if (!supervisors.isEmpty()){
             try {
-                return operators.take();
+                return supervisors.take();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -49,17 +46,17 @@ public class OperatorPool implements GenericPool<Operator> {
     }
 
     @Override
-    public void release(Operator operator) {
-        operators.offer(operator);
+    public void release(Supervisor supervisor) {
+        supervisors.offer(supervisor);
     }
 
     @Override
     public boolean isEmpty() {
-        return operators.isEmpty();
+        return supervisors.isEmpty();
     }
 
     @Override
     public int getSize() {
-        return operators.size();
+        return supervisors.size();
     }
 }
