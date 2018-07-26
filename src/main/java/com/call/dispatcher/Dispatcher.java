@@ -1,9 +1,13 @@
 package com.call.dispatcher;
 
 import com.call.domain.ClientCall;
+import com.call.domain.Director;
 import com.call.domain.Operator;
+import com.call.domain.Supervisor;
+import com.call.pool.DirectorPool;
 import com.call.pool.GenericPool;
 import com.call.pool.OperatorPool;
+import com.call.pool.SupervisorPool;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
@@ -21,6 +25,8 @@ public class Dispatcher{
 
     private ThreadPoolExecutor executor;
     private GenericPool<Operator> operatorsPool;
+    private GenericPool<Supervisor> supervisorPool;
+    private GenericPool<Director> directorPool;
 
     /**
      * The constructor takes the size and instantiates the thread pool to handle calls,
@@ -38,6 +44,10 @@ public class Dispatcher{
                       int directorPoolSize){
         this.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(callPoolSize);
         this.operatorsPool = new OperatorPool(operatorPoolSize);
+        this.executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(callPoolSize);
+        this.operatorsPool = new OperatorPool(operatorPoolSize);
+        this.supervisorPool = new SupervisorPool(supervisorPoolSize);
+        this.directorPool = new DirectorPool(directorPoolSize);
     }
 
 
@@ -51,6 +61,18 @@ public class Dispatcher{
             CompletableFuture
                     .supplyAsync(clientCall, executor)
                     .thenAccept(agent -> operatorsPool.release((Operator)agent));
+        } else if(!supervisorPool.isEmpty()){
+            Supervisor supervisor = supervisorPool.get();
+            clientCall.setAgent(supervisor);
+            CompletableFuture
+                    .supplyAsync(clientCall, executor)
+                    .thenAccept(agent -> supervisorPool.release((Supervisor)agent));
+        } else if(!directorPool.isEmpty()){
+            Director director = directorPool.get();
+            clientCall.setAgent(director);
+            CompletableFuture
+                    .supplyAsync(clientCall, executor)
+                    .thenAccept(agent -> directorPool.release((Director)agent));
         }
     }
 

@@ -30,4 +30,20 @@ public class DispatcherTest {
         dispatcher.shutDown();
     }
 
+    @Test
+    public void shouldDipatchSevenCallsWhitNoSupervisorAndNoDirectorTest(){
+        Dispatcher dispatcher = new Dispatcher(10, 7,0,0);
+        dispatcher.dispatchCall();
+        dispatcher.dispatchCall();
+        dispatcher.dispatchCall();
+        dispatcher.dispatchCall();
+        dispatcher.dispatchCall();
+        dispatcher.dispatchCall();
+        dispatcher.dispatchCall();
+        dispatcher.dispatchCall();
+        dispatcher.dispatchCall();
+        dispatcher.dispatchCall();
+        dispatcher.shutDown();
+    }
+
 }
